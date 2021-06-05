@@ -8,6 +8,8 @@
 # testing
 /coverage
 
+/.husky
+
 # next.js
 /.next/
 /out/
