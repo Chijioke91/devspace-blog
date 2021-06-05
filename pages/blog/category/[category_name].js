@@ -4,21 +4,27 @@ import matter from 'gray-matter';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
 import Post from '@/components/Post';
-import { sortByDate } from '@/utils/index';
+import { getPosts } from '@/lib/posts';
+import CategoryList from '@/components/CategoryList';
 
-export default function CategoryBlogPage({ posts, category_name }) {
+export default function CategoryBlogPage({ posts, category_name, categories }) {
   return (
     <Layout>
-      <h1 className="text-4xl border-b-4 p-5 font-bold">{category_name} Posts</h1>
+      <div className="flex justify-between">
+        <div className="w-3/4 mr-10">
+          <h1 className="text-5xl border-b-4 p-5 font-bold">Posts in {category_name}</h1>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {posts.map((post, idx) => {
-          return <Post key={idx} {...post} />;
-        })}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {posts.map((post, index) => (
+              <Post key={index} {...post} />
+            ))}
+          </div>
+        </div>
+
+        <div className="w-1/4">
+          <CategoryList categories={categories} />
+        </div>
       </div>
-      <Link href="/blog">
-        <a className="block text-center border border-gray-500 text-gray-800 rounded-md py-4 my-5 transition duration-500 ease select-none hover:text-white hover:bg-gray-900 focus:outline-none focus:shadow-outline w-full">All Posts</a>
-      </Link>
     </Layout>
   );
 }
@@ -45,24 +51,20 @@ export const getStaticPaths = async () => {
 };
 
 export const getStaticProps = async ({ params: { category_name } }) => {
-  const files = fs.readdirSync(path.join(process.cwd(), 'posts'));
+  const posts = getPosts();
 
-  const posts = files.map((filename) => {
-    const slug = filename.replace('.md', '');
+  const allCategories = posts.map((post) => post.frontMatter.category);
 
-    const metaMark = fs.readFileSync(path.join(process.cwd(), 'posts', filename), 'utf8');
+  // fetch unique sets of categories
+  const uniqueCategories = [...new Set(allCategories)];
 
-    const { data: frontMatter } = matter(metaMark);
-
-    return { slug, frontMatter };
-  });
-
-  const categoryPosts = posts.sort(sortByDate).filter((post) => post.frontMatter.category.toLowerCase() === category_name);
+  const categoryPosts = posts.filter((post) => post.frontMatter.category.toLowerCase() === category_name);
 
   return {
     props: {
       posts: categoryPosts,
       category_name,
+      categories: uniqueCategories,
     },
   };
 };
