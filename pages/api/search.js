@@ -13,13 +13,13 @@ export default (req, res) => {
       const markDMeta = fs.readFileSync(path.join(process.cwd(), 'posts', filename), 'utf-8');
       const { data: frontMatter } = matter(markDMeta);
 
-      return { frontMatter };
+      const slug = filename.replace('.md', '');
+
+      return { frontMatter, slug };
     });
   }
 
   const results = posts.filter(({ frontMatter: { title, excerpt, category } }) => title.toLowerCase().indexOf(req.query.q.toLowerCase()) !== -1 || excerpt.toLowerCase().indexOf(req.query.q.toLowerCase()) !== -1 || category.toLowerCase().indexOf(req.query.q.toLowerCase()) !== -1);
-
-  console.log(results);
 
   res.status(200).json({ results });
 };

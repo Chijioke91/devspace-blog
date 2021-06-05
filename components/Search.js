@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
+import SearchResults from './SearchResults';
 
 export default function Search() {
   const [term, setTerm] = useState('');
@@ -12,6 +13,9 @@ export default function Search() {
       } else {
         const res = await fetch(`/api/search?q=${term}`);
         const { results } = await res.json();
+
+        console.log(results);
+
         setSearchResults(results);
       }
     };
@@ -32,6 +36,7 @@ export default function Search() {
           </form>
         </div>
       </div>
+      <SearchResults results={searchResults} />
     </div>
   );
 }
