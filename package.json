@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "cache-posts": "node scripts/cache.js"
+    "cache-posts": "node scripts/cache.js",
+    "prepare": "husky install"
   },
   "husky": {
     "hooks": {
@@ -16,7 +17,6 @@
   "dependencies": {
     "@tailwindcss/typography": "^0.4.1",
     "gray-matter": "^4.0.3",
-    "husky": "^6.0.0",
     "marked": "^2.0.7",
     "next": "10.2.3",
     "react": "17.0.2",
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.2.6",
+    "husky": "^6.0.0",
     "postcss": "^8.3.0",
     "tailwindcss": "^2.1.4"
   }
