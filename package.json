@@ -9,6 +9,11 @@
     "cache-posts": "node scripts/cache.js",
     "prepare": "husky install"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run cache-posts && git add cache/data.js"
+    }
+  },
   "dependencies": {
     "@tailwindcss/typography": "^0.4.1",
     "gray-matter": "^4.0.3",
