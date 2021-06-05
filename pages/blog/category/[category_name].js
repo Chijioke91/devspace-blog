@@ -6,10 +6,10 @@ import Layout from '@/components/Layout';
 import Post from '@/components/Post';
 import { sortByDate } from '@/utils/index';
 
-export default function Home({ posts }) {
+export default function CategoryBlogPage({ posts, category_name }) {
   return (
-    <Layout title="Home">
-      <h1 className="text-4xl border-b-4 p-5 font-bold">Latest Posts</h1>
+    <Layout>
+      <h1 className="text-4xl border-b-4 p-5 font-bold">{category_name} Posts</h1>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
         {posts.map((post, idx) => {
@@ -23,7 +23,28 @@ export default function Home({ posts }) {
   );
 }
 
-export const getStaticProps = async () => {
+export const getStaticPaths = async () => {
+  const files = fs.readdirSync(path.join(process.cwd(), 'posts'));
+
+  const categories = files.map((filename) => {
+    const metaMark = fs.readFileSync(path.join(process.cwd(), 'posts', filename), 'utf8');
+
+    const { data: frontMatter } = matter(metaMark);
+
+    return frontMatter.category.toLowerCase();
+  });
+
+  const paths = categories.map((category) => ({
+    params: { category_name: category },
+  }));
+
+  return {
+    paths,
+    fallback: false,
+  };
+};
+
+export const getStaticProps = async ({ params: { category_name } }) => {
   const files = fs.readdirSync(path.join(process.cwd(), 'posts'));
 
   const posts = files.map((filename) => {
@@ -36,9 +57,12 @@ export const getStaticProps = async () => {
     return { slug, frontMatter };
   });
 
+  const categoryPosts = posts.sort(sortByDate).filter((post) => post.frontMatter.category.toLowerCase() === category_name);
+
   return {
     props: {
-      posts: posts.sort(sortByDate).slice(0, 6),
+      posts: categoryPosts,
+      category_name,
     },
   };
 };
