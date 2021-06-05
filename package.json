@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "cache-posts": "node scripts/cache.js",
-    "prepare": "husky install"
+    "cache-posts": "node scripts/cache.js"
   },
   "husky": {
     "hooks": {
